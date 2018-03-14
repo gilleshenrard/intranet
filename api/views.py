@@ -28,7 +28,7 @@ def get_delete_update_profile(request, usrname):
 def get_post_profiles(request):
     # get all profiles
     if request.method == 'GET':
-        stdlogger.debug("API_get_all : request for all profiles retrieval")
+        stdlogger.info("API_get_all : request for all profiles retrieval")
         return HttpResponseNotFound()
 
     # insert a new record for a profile

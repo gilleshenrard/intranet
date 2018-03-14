@@ -98,7 +98,7 @@ REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
-AUTH_USER_MODEL = 'core.User'
+AUTH_USER_MODEL = 'api.User'
 
 LOGGING = {
     'version': 1,
@@ -118,19 +118,26 @@ LOGGING = {
     },
     'handlers': {
         'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
-            'formatter': 'simple',
+            'formatter': 'simple'
         },
     },
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': True,
         },
-        'intranet': {
+        'django.request': {
             'handlers': ['console'],
-            'filters': ['require_debug_true'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'api': {
+            'handlers': ['console'],
             'level': 'DEBUG',
-            }
-    },
+            'filters': ['require_debug_true']
+        }
+    }
 }
