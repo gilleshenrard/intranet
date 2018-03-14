@@ -1,6 +1,9 @@
 from django.test import TestCase
 from ..models import User
 from ..serializers import UserSerializer
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class UserTest(TestCase):
@@ -26,21 +29,21 @@ class UserTest(TestCase):
         self.jane.save()
 
     def test_valid_get_user(self):
-        user = User.objects.get(username=self.john['username'])
-        self.assertEqual(str(user), self.john['username'])
+        user = User.objects.get(username=self.john.username)
+        self.assertEqual(str(user), self.john.username)
 
-        user = User.objects.get(username=self.jane['username'])
-        self.assertEqual(str(user), self.jane['username'])
+        user = User.objects.get(username=self.jane.username)
+        self.assertEqual(str(user), self.jane.username)
 
     def test_invalid_username_doesnotexist_person(self):
         with self.assertRaises(User.DoesNotExist):
             User.objects.get(username='test')
 
     def test_valid_delete_user(self):
-        user = User.objects.get(username=self.john['username'])
+        user = User.objects.get(username=self.john.username)
         user.delete()
         with self.assertRaises(User.DoesNotExist):
-            User.objects.get(username=self.john['username'])
+            User.objects.get(username=self.john.username)
 
 
 class SerializerTest(TestCase):
@@ -89,9 +92,41 @@ class SerializerTest(TestCase):
                             birthdate='1973-11-04',
                             description='Fun guy')
 
-    def test_valid_serializer_person(self):
-        serializer = UserSerializer(self.jimJson)
+        self.janePartialJson = dict(first_name='Jim',
+                                    last_name='Damn',
+                                    email='jim@test.com',
+                                    country='ES',
+                                    phone='+34123456789',
+                                    field='IT',
+                                    occupation='Developer',
+                                    birthdate='1973-11-04',
+                                    description='Fun guy')
+
+    def test_valid_serializer_user(self):
+        serializer = UserSerializer(data=self.jimJson)
         if serializer.is_valid():
             serializer.save()
             user = User.objects.get(username=self.jimJson['username'])
-            self.assertEqual(data, serializer.data)
+            self.assertEqual(user.occupation, serializer.data['occupation'])
+        else:
+            for field, errors in serializer.errors.items():
+                for error in errors:
+                    logger.error(field + " -> " + error)
+            raise ValueError('Serializer.save() test failed')
+
+    def test_invalid_serializer_user(self):
+        serializer = UserSerializer(data=self.janePartialJson)
+        self.assertEqual(serializer.is_valid(), False)
+
+    def test_valid_serializer_update_user(self):
+        serializer = UserSerializer(instance=self.john, data=self.janePartialJson, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            user = User.objects.get(username=self.john.username)
+            self.assertEqual(user.occupation, self.janePartialJson['occupation'])
+            self.assertEqual(user.first_name, self.janePartialJson['first_name'])
+        else:
+            for field, errors in serializer.errors.items():
+                for error in errors:
+                    logger.error(field + " -> " + error)
+            raise ValueError('Serializer.save() test failed')
