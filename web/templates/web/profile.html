@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Intranet - {{ usrname }}{% endblock %}
+
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'web/css/profile.css' %}" />
+{% endblock %}
+
+
+
+{% block body %}
+<div class="container">
+	<div class="row">
+		<div class="col-lg-7 col-md-7 col-sm-12">
+			<div class="card bg-faded">
+				<form method="POST" action="{% url 'profile' usrname %}" enctype="multipart/form-data" id="profile_form">
+					{% include 'web/form.html' %}
+					<button type="submit" class="btn btn-info" id="btn_submit">Submit</button>
+					<a href="{% url 'home' %}" class="btn btn-danger">Cancel</a>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+
+{% block script %}
+<script type="application/javascript" src="{% static 'web/js/profile.js' %}"></script>
+{% endblock %}

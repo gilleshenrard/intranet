@@ -1,9 +1,10 @@
 from django.shortcuts import render
-from django.http.response import HttpResponseNotFound
-from requests import get
+from django.http.response import HttpResponseNotFound, HttpResponseBadRequest
+from requests import get, put
 from rest_framework import status
 from django.core.urlresolvers import reverse
 from django.contrib.auth.forms import AuthenticationForm
+from .forms import UserForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
@@ -60,6 +61,48 @@ def user_logout(request):
 
 def profile(request, usrname):
     """Handles profile page behaviour and rendering"""
+    stdlogger.info("PROFILE : request for home page")
 
-    stdlogger.info("PROFILE : request for profile of '" + usrname + "'")
-    return HttpResponseNotFound()
+    if request.method == "GET":
+        # retrieve single profile
+        stdlogger.debug("PROFILE_get : request for profile of '" + usrname + "' retrieval")
+        r = get("http://localhost:8000" + reverse("get_delete_update_profile", kwargs={'usrname': usrname}))
+        if r.status_code == status.HTTP_200_OK:
+            form = UserForm(data=r.json())
+
+            if not form.is_valid():
+                # login data is invalid
+                stdlogger.error("PROFILE_get : form data is invalid")
+                for field, errors in form.errors.items():
+                    for error in errors:
+                        stdlogger.error(field + " -> " + error)
+                        messages.add_message(request, messages.ERROR, field + " : " + error)
+
+            return render(request, 'web/profile.html', {'form': form, 'usrname': usrname, })
+        else:
+            stdlogger.error("PROFILE_get : profile for '" + usrname + "' could not be found")
+            return HttpResponseNotFound()
+
+    elif request.method == "POST":
+        # update single profile
+        stdlogger.debug("PROFILE_post : request for profile of '" + usrname + "' update")
+        form = UserForm(request.POST or None, request.FILES)
+
+        if form.is_valid():
+            # form data is valid
+            stdlogger.debug("PROFILE_post : form data is valid")
+            r = put("http://localhost:8000" + reverse("get_delete_update_profile", kwargs={'usrname': usrname}), data=request.POST)
+
+            if r.status_code == status.HTTP_404_NOT_FOUND:
+                # profile not found
+                stdlogger.error("PROFILE_post : profile not found")
+                return HttpResponseNotFound()
+
+            elif r.status_code == status.HTTP_400_BAD_REQUEST:
+                stdlogger.error("PROFILE_post : Something wrong happened")
+                return HttpResponseBadRequest()
+
+            elif r.status_code == status.HTTP_204_NO_CONTENT:
+                stdlogger.info("PROFILE_post : profile for '" + usrname + "' successfully updated")
+                messages.add_message(request, messages.SUCCESS, "Profile successfully updated")
+                return render(request, 'web/profile.html', {'form': form, 'usrname': usrname, })

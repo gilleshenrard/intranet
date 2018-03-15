@@ -1,0 +1,15 @@
+{% csrf_token %}
+{% if form.non_field_errors %}
+<div class="alert alert-danger">
+	{{form.non_field_errors}}
+</div>
+{% endif %}
+
+{% for field in form %}
+<div class="form-group has-feedback" id='group_{{field.html_name}}'>
+	{{field.label_tag}}
+	{{field}}
+	<span class="glyphicon form-control-feedback" id="fb_{{field.html_name}}"></span>
+	<span id="tip_{{field.html_name}}" class="help-block small">{{field.errors.as_text}}</span>
+</div>
+{% endfor %}

@@ -1,0 +1,18 @@
+.navbar {
+	background-color: rgba(51, 107, 135, 1);
+	position:relative;
+}
+
+.card {
+	padding: 0 10px 0 10px;
+}
+
+.form-control {
+	margin: 0;
+	padding: 0;
+}
+
+label {
+	margin: 0;
+	padding: 0;
+}
