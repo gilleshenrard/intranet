@@ -52,7 +52,9 @@ def home(request):
 
 def user_logout(request):
     """Handles user logout and redirects to home page"""
+    stdlogger.info("LOGOUT : logout request received")
     logout(request)
+    messages.add_message(request, messages.SUCCESS, 'You are now logged out')
     return redirect(reverse('home'))
 
 
