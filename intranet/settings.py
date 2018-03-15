@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'rest_framework',
     'api',
+    'web',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -138,6 +139,11 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'DEBUG',
             'filters': ['require_debug_true']
-        }
+        },
+        'web': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'filters': ['require_debug_true']
+        },
     }
 }

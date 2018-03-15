@@ -1,0 +1,21 @@
+@font-face {
+	font-family : Audimat;
+	src : url(AUdimat-Regular.otf);
+}
+
+body {
+	font-family: Audimat;
+	background-color: rgba(144, 175, 197, 1);
+}
+
+.navbar {
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: 0;
+	background: none;
+	border: 0;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+	z-index: 1;
+}
