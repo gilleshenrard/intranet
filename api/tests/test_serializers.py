@@ -74,7 +74,7 @@ class SerializerTest(TestCase):
                     logger.error(field + " -> " + error)
             raise ValueError('Serializer.save() test failed')
 
-    def test_invalid_serializer_user(self):
+    def test_invalid_serializer_incomplete_user(self):
         serializer = UserSerializer(data=self.janePartialJson)
         self.assertEqual(serializer.is_valid(), False)
 

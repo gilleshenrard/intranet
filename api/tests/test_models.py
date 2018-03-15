@@ -44,3 +44,13 @@ class UserTest(TestCase):
         user.delete()
         with self.assertRaises(User.DoesNotExist):
             User.objects.get(username=self.john.username)
+
+    def test_valid_update_user(self):
+        user = User.objects.get(username=self.john.username)
+        user.occupation = 'developer'
+        user.field = 'IT'
+        user.save()
+
+        user = User.objects.get(username=self.john.username)
+        self.assertEqual(user.occupation, 'developer')
+        self.assertEqual(user.field, 'IT')

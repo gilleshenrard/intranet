@@ -228,3 +228,26 @@ class UpdateSingleProfileTest(TestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class DeleteSingleProfileTest(TestCase):
+    """ Test module for deleting an existing profile record """
+
+    def setUp(self):
+        self.john = User.objects.create(
+            username='john', first_name='John', last_name='Doe', country='UK', email='test@test.com',
+            phone='+44123456789', field='Diplomacy', occupation='Spy', birthdate='1963-05-01', description='Tall guy')
+
+    def test_valid_delete_profile(self):
+        response = client.delete(
+            reverse('get_delete_update_profile', kwargs={'usrname': self.john.username}))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_invalid_delete_profile(self):
+        response = client.delete(
+            reverse('get_delete_update_profile', kwargs={'usrname': 'test'}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_invalid_delete_profile_url(self):
+        with self.assertRaises(NoReverseMatch):
+            client.delete(reverse('get_delete_update_profile', kwargs={'usrname': 30}))
