@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Intranet - Home{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'web/css/home.css' %}" />
+{% endblock %}
+
+{% block header %}
+<div class="jumbotron">
+	<div class="container text-center text-white">
+		<h1 class="display-1">Intranet</h1>
+		<h2 class="display-5">Sample RESTful website</h2>
+	</div>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+	<div class="row">
+		{% for user in users %}
+		<div class="col-lg-3 col-md-3 col-sm-6">
+			<div class="container">
+				<div class="view overlay hm-stylish-strong">
+					<div class="card">
+						<div class="card-body">
+							<h4 class="text-center card-title">{{ user.first_name }}</h4>
+						</div>
+						<img src="{% static 'web/img/person-icon-square.png' %}" alt='{{ user.first_name }}' class="img-fluid card-img-top" />
+						<div class="mask flex-center text-white">
+							<ul>
+								<li>{{ user.occupation }}</li>
+								<li>{{ user.description }}</li>
+							</ul>
+							<a href="{% url 'profile' user.username %}" class="badge-link btn btn-outline-info my-2 my-sm-0" role="button">View page</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script type="application/javascript" src="{% static 'web/js/home.js' %}"></script>
+{% endblock %}
