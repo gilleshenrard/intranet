@@ -136,10 +136,6 @@ class GetSingleProfileTest(TestCase):
         with self.assertRaises(NoReverseMatch):
             client.get(reverse('get_delete_update_person', kwargs={'usrname': 30}))
 
-    def test_get_invalid_single_profile_url_length(self):
-        with self.assertRaises(NoReverseMatch):
-            client.get(reverse('get_delete_update_profile', kwargs={'usrname': "abcdefghijklmnopqrstuvwxyzabcdefg"}))
-
 
 class CreateNewProfileTest(TestCase):
     """ Test module for inserting a new profile """
