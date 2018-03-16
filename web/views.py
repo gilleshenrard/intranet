@@ -106,3 +106,11 @@ def profile(request, usrname):
                 stdlogger.info("PROFILE_post : profile for '" + usrname + "' successfully updated")
                 messages.add_message(request, messages.SUCCESS, "Profile successfully updated")
                 return render(request, 'web/profile.html', {'form': form, 'usrname': usrname, })
+
+        else:
+            # form data is invalid
+            stdlogger.error("PROFILE_post : form data is invalid")
+            for field, errors in form.errors.items():
+                for error in errors:
+                    stdlogger.error(field + " -> " + error)
+            return HttpResponseBadRequest()
