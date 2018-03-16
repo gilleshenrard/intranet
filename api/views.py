@@ -16,7 +16,7 @@ def get_delete_update_profile(request, usrname):
     # get details of a single profile
     if request.method == 'GET':
         stdlogger.info("API_get : request for profile '" + usrname + "' retrieval")
-        serializer = UserSerializer(user)
+        serializer = UserSerializer(instance=user)
         return Response(serializer.data)
 
     # delete a single profile
@@ -28,7 +28,7 @@ def get_delete_update_profile(request, usrname):
     # update details of a single profile
     elif request.method == 'PUT':
         stdlogger.info("API_put : request for profile '" + usrname + "' update")
-        serializer = UserSerializer(user, data=request.data, partial=True)
+        serializer = UserSerializer(instance=user, data=request.data, partial=True)
 
         if serializer.is_valid():
             # data received is valid
@@ -52,7 +52,7 @@ def get_post_profiles(request):
     if request.method == 'GET':
         stdlogger.info("API_get_all : request for all profiles retrieval")
         people = get_user_model().objects.all()
-        serializer = UserSerializer(people, many=True)
+        serializer = UserSerializer(instance=people, many=True)
         return Response(serializer.data)
 
     # insert a new record for a profile
