@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
-from .models import User
+from django.contrib.auth import get_user_model
 from .serializers import UserSerializer
 from rest_framework.response import Response
 from rest_framework import status
@@ -11,7 +11,7 @@ stdlogger = logging.getLogger(__name__)
 
 @api_view(['GET', 'DELETE', 'PUT'])
 def get_delete_update_profile(request, usrname):
-    user = get_object_or_404(User, username=usrname)
+    user = get_object_or_404(get_user_model(), username=usrname)
 
     # get details of a single profile
     if request.method == 'GET':
@@ -51,7 +51,7 @@ def get_post_profiles(request):
     # get all profiles
     if request.method == 'GET':
         stdlogger.info("API_get_all : request for all profiles retrieval")
-        people = User.objects.all()
+        people = get_user_model().objects.all()
         serializer = UserSerializer(people, many=True)
         return Response(serializer.data)
 

@@ -1,7 +1,7 @@
 from rest_framework import status
 from django.test import TestCase, Client
 from django.core.urlresolvers import reverse, NoReverseMatch
-from ..models import User
+from django.contrib.auth import get_user_model
 from ..serializers import UserSerializer
 import json
 
@@ -13,7 +13,7 @@ class MethodsTest(TestCase):
     """Test module for request methods on API"""
 
     def setUp(self):
-        self.john = User.objects.create_user('john', 'test@test.com', 'test', first_name='John', last_name='Doe')
+        self.john = get_user_model().objects.create_user('john', 'test@test.com', 'test', first_name='John', last_name='Doe')
 
     def test_invalid_methods(self):
         # send delete on get_post_people
@@ -33,7 +33,7 @@ class GetAllProfilesTest(TestCase):
     """ Test module for GET all profiles API """
 
     def setUp(self):
-        self.john = User.objects.create_user('john', 'john@test.com', 'test', first_name='John', last_name='Doe')
+        self.john = get_user_model().objects.create_user('john', 'john@test.com', 'test', first_name='John', last_name='Doe')
         self.john.country = 'UK'
         self.john.phone = '+44123456789'
         self.john.field = 'Diplomacy'
@@ -42,7 +42,7 @@ class GetAllProfilesTest(TestCase):
         self.john.description = 'Tall guy'
         self.john.save()
 
-        self.jane = User.objects.create_user('jane', 'jane@test.com', 'test', first_name='Jane', last_name='Dean')
+        self.jane = get_user_model().objects.create_user('jane', 'jane@test.com', 'test', first_name='Jane', last_name='Dean')
         self.jane.country = 'US'
         self.jane.phone = '+1123456789'
         self.jane.field = 'Administration'
@@ -51,7 +51,7 @@ class GetAllProfilesTest(TestCase):
         self.jane.description = 'Smart girl'
         self.jane.save()
 
-        self.jack = User.objects.create_user('jack', 'jack@test.com', 'test', first_name='Jack', last_name='Damn')
+        self.jack = get_user_model().objects.create_user('jack', 'jack@test.com', 'test', first_name='Jack', last_name='Damn')
         self.jack.country = 'ES'
         self.jack.phone = '+34123456789'
         self.jack.field = 'IT'
@@ -60,7 +60,7 @@ class GetAllProfilesTest(TestCase):
         self.jack.description = 'Funny guy'
         self.jack.save()
 
-        self.jim = User.objects.create_user('jim', 'jim@test.com', 'test', first_name='Jim', last_name='Done')
+        self.jim = get_user_model().objects.create_user('jim', 'jim@test.com', 'test', first_name='Jim', last_name='Done')
         self.jim.country = 'FR'
         self.jim.phone = '+3323456789'
         self.jim.field = 'Maintenance'
@@ -73,7 +73,7 @@ class GetAllProfilesTest(TestCase):
         # get API response
         response = client.get(reverse('get_post_profiles'))
         # get data from db
-        people = User.objects.all()
+        people = get_user_model().objects.all()
         serializer = UserSerializer(people, many=True)
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -83,7 +83,7 @@ class GetSingleProfileTest(TestCase):
     """ Test module for GET single profile API """
 
     def setUp(self):
-        self.john = User.objects.create_user('john', 'john@test.com', 'test', first_name='John', last_name='Doe')
+        self.john = get_user_model().objects.create_user('john', 'john@test.com', 'test', first_name='John', last_name='Doe')
         self.john.country = 'UK'
         self.john.phone = '+44123456789'
         self.john.field = 'Diplomacy'
@@ -92,7 +92,7 @@ class GetSingleProfileTest(TestCase):
         self.john.description = 'Tall guy'
         self.john.save()
 
-        self.jane = User.objects.create_user('jane', 'jane@test.com', 'test', first_name='Jane', last_name='Dean')
+        self.jane = get_user_model().objects.create_user('jane', 'jane@test.com', 'test', first_name='Jane', last_name='Dean')
         self.jane.country = 'US'
         self.jane.phone = '+1123456789'
         self.jane.field = 'Administration'
@@ -101,7 +101,7 @@ class GetSingleProfileTest(TestCase):
         self.jane.description = 'Smart girl'
         self.jane.save()
 
-        self.jack = User.objects.create_user('jack', 'jack@test.com', 'test', first_name='Jack', last_name='Damn')
+        self.jack = get_user_model().objects.create_user('jack', 'jack@test.com', 'test', first_name='Jack', last_name='Damn')
         self.jack.country = 'ES'
         self.jack.phone = '+34123456789'
         self.jack.field = 'IT'
@@ -110,7 +110,7 @@ class GetSingleProfileTest(TestCase):
         self.jack.description = 'Funny guy'
         self.jack.save()
 
-        self.jim = User.objects.create_user('jim', 'jim@test.com', 'test', first_name='Jim', last_name='Done')
+        self.jim = get_user_model().objects.create_user('jim', 'jim@test.com', 'test', first_name='Jim', last_name='Done')
         self.jim.country = 'FR'
         self.jim.phone = '+3323456789'
         self.jim.field = 'Maintenance'
@@ -122,7 +122,7 @@ class GetSingleProfileTest(TestCase):
     def test_get_valid_single_profile(self):
         response = client.get(
             reverse('get_delete_update_profile', kwargs={'usrname': self.john.username}))
-        user = User.objects.get(username=self.john.username)
+        user = get_user_model().objects.get(username=self.john.username)
         serializer = UserSerializer(user)
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -185,7 +185,7 @@ class UpdateSingleProfileTest(TestCase):
     """ Test module for updating an existing profile record """
 
     def setUp(self):
-        self.john = User.objects.create(
+        self.john = get_user_model().objects.create(
             username='john', first_name='John', last_name='Doe', country='UK', email='test@test.com',
             phone='+44123456789', field='Diplomacy', occupation='Spy', birthdate='1963-05-01', description='Tall guy')
 
@@ -230,7 +230,7 @@ class DeleteSingleProfileTest(TestCase):
     """ Test module for deleting an existing profile record """
 
     def setUp(self):
-        self.john = User.objects.create(
+        self.john = get_user_model().objects.create(
             username='john', first_name='John', last_name='Doe', country='UK', email='test@test.com',
             phone='+44123456789', field='Diplomacy', occupation='Spy', birthdate='1963-05-01', description='Tall guy')
 

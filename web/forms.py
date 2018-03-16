@@ -1,13 +1,13 @@
 from django.forms import ModelForm
-from api.models import User
+from django.contrib.auth import get_user_model
 from django.forms.fields import TextInput
-from django.forms.widgets import Textarea, EmailInput, DateInput, PasswordInput
+from django.forms.widgets import Textarea, EmailInput, DateInput
 
 
 class UserForm(ModelForm):
     class Meta:
-        model = User
-        fields = ('first_name', 'last_name', 'email', 'country', 'phone', 'field', 'occupation', 'birthdate', 'description')
+        model = get_user_model()
+        exclude = ['username', 'password', 'groups', 'is_active', 'id', 'last_login', 'user_permissions', 'is_staff', 'is_superuser', 'date_joined']
         widgets = {
             'first_name': TextInput(attrs={'class': 'form-control'}),
             'last_name': TextInput(attrs={'class': 'form-control'}),

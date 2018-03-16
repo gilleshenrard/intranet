@@ -1,5 +1,5 @@
 from django.test import TestCase
-from ..models import User
+from django.contrib.auth import get_user_model
 from ..serializers import UserSerializer
 import logging
 
@@ -10,7 +10,7 @@ class SerializerTest(TestCase):
     """ Test module for User serialiser """
 
     def setUp(self):
-        self.john = User.objects.create_user('john', 'john@test.com', 'test', first_name='John', last_name='Doe')
+        self.john = get_user_model().objects.create_user('john', 'john@test.com', 'test', first_name='John', last_name='Doe')
         self.john.country = 'UK'
         self.john.phone = '+44123456789'
         self.john.field = 'Diplomacy'
@@ -19,7 +19,7 @@ class SerializerTest(TestCase):
         self.john.description = 'Tall guy'
         self.john.save()
 
-        self.jane = User.objects.create_user('jane', 'jane@test.com', 'test', first_name='Jane', last_name='Dean')
+        self.jane = get_user_model().objects.create_user('jane', 'jane@test.com', 'test', first_name='Jane', last_name='Dean')
         self.jane.country = 'US'
         self.jane.phone = '+1123456789'
         self.jane.field = 'Administration'
@@ -66,7 +66,7 @@ class SerializerTest(TestCase):
         serializer = UserSerializer(data=self.jimJson)
         if serializer.is_valid():
             serializer.save()
-            user = User.objects.get(username=self.jimJson['username'])
+            user = get_user_model().objects.get(username=self.jimJson['username'])
             self.assertEqual(user.occupation, serializer.data['occupation'])
         else:
             for field, errors in serializer.errors.items():
@@ -82,7 +82,7 @@ class SerializerTest(TestCase):
         serializer = UserSerializer(instance=self.john, data=self.janePartialJson, partial=True)
         if serializer.is_valid():
             serializer.save()
-            user = User.objects.get(username=self.john.username)
+            user = get_user_model().objects.get(username=self.john.username)
             self.assertEqual(user.occupation, self.janePartialJson['occupation'])
             self.assertEqual(user.first_name, self.janePartialJson['first_name'])
         else:
