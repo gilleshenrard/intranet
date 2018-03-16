@@ -1,8 +1,7 @@
 from django.test import TestCase, Client
 from django.core.urlresolvers import reverse, NoReverseMatch
 from rest_framework import status
-from api.models import User
-from django.contrib.auth import get_user
+from django.contrib.auth import get_user, get_user_model
 import json
 from api.serializers import UserSerializer
 
@@ -31,7 +30,7 @@ class postHomeTest(TestCase):
     def setUp(self):
         self.client = Client(enforce_csrf_checks=False)
         self.clientCSRF = Client(enforce_csrf_checks=True)
-        self.john = User.objects.create_user('john', password='test')
+        self.john = get_user_model().objects.create_user('john', password='test')
         self.johnJson = dict(username='john', password='test')
         self.johnJsonInvalid = dict(username='john', password='test2')
 
@@ -62,7 +61,7 @@ class getProfileTest(TestCase):
 
     def setUp(self):
         self.client = Client(enforce_csrf_checks=False)
-        self.john = User.objects.create(
+        self.john = get_user_model().objects.create(
             username='john', password='test', first_name='John', last_name='Doe', country='UK', email='test@test.com',
             phone='+44123456789', field='Diplomacy', occupation='Spy', birthdate='1963-05-01', description='Tall guy')
 
@@ -82,7 +81,7 @@ class postBadgeTest(TestCase):
 
     def setUp(self):
         self.client = Client(enforce_csrf_checks=False)
-        self.john = User.objects.create(
+        self.john = get_user_model().objects.create(
             username='john', password='test', first_name='John', last_name='Doe', country='UK', email='test@test.com',
             phone='+44123456789', field='Diplomacy', occupation='Spy', birthdate='1963-05-01', description='Tall guy')
 
