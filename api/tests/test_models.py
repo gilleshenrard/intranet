@@ -1,6 +1,5 @@
 from django.test import TestCase
 from ..models import User
-from ..serializers import UserSerializer
 import logging
 
 logger = logging.getLogger(__name__)
